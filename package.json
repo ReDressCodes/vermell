@@ -1,0 +1,29 @@
+{
+  "name": "vermell",
+  "version": "1.0.4",
+  "description": "User-friendly and compact C++ Web Framework",
+  "scripts": {
+    "build": "cmake -S . -B build/ && cmake --build build",
+    "install": "sudo make -C build/ install",
+    "test": "cmake -S . -B build -DTESTING=ON && cmake --build build && ctest --test-dir build",
+    "docker:build": "docker build . -t vermellcc/vermell:local"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vermellcc/vermell.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vermellcc/vermell/issues"
+  },
+  "keywords": [
+    "http",
+    "server",
+    "arm",
+    "pure",
+    "web",
+    "c++",
+    "cpp20"
+  ],
+  "license": "MIT",
+  "private": false
+}
