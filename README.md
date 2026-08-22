@@ -1,6 +1,5 @@
 
-
-<img width="2548" height="984" alt="image" src="https://github.com/user-attachments/assets/4526652e-081f-4d7b-bead-4a023ccce933" />
+<img width="2548" height="984" alt="image" src="https://github.com/user-attachments/assets/781a62da-e150-4715-b525-f178dc3dc7ae" />
 
 
 **A minimal, zero-bloat web framework designed for modern C++ environments. Fast, structural, and strictly typed.**
