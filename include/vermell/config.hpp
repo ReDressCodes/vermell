@@ -73,6 +73,9 @@ namespace vermell {
 
         // ---- file rendering hardening (readFile / compose / render) ----
         RenderSecurity render{};
+#ifdef DURING
+	struct io_uring ring;
+#endif
     };
 
 } // namespace vermell

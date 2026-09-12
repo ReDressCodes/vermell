@@ -26,6 +26,40 @@ set_target_properties(vermell PROPERTIES
 )
 target_include_directories(vermell PUBLIC "${CMAKE_SOURCE_DIR}/include")
 
+set(LIBURING_CUSTOM_INCLUDE_HINT "/usr/include")
+set(LIBURING_CUSTOM_LIB_HINT     "/usr/lib")
+
+find_path(LIBURING_INCLUDE_DIR
+    NAMES liburing.h
+    HINTS ${LIBURING_CUSTOM_INCLUDE_HINT}
+)
+
+find_library(LIBURING_LIBRARY
+    NAMES uring
+    HINTS ${LIBURING_CUSTOM_LIB_HINT}
+)
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(LibUring
+    REQUIRED_VARS LIBURING_LIBRARY LIBURING_INCLUDE_DIR
+)
+
+if(LibUring_FOUND)
+    target_link_libraries(vermell PRIVATE ${LIBURING_LIBRARY})
+    target_include_directories(vermell PRIVATE ${LIBURING_INCLUDE_DIR})
+    target_compile_definitions(vermell PRIVATE DURING)
+
+    message(STATUS "--------------------------------------------")
+    message(STATUS "LibUring Discovery Status:")
+    message(STATUS "  LibUring_FOUND:       ${LibUring_FOUND}")
+   message(STATUS "  LIBURING_INCLUDE_DIR: ${LIBURING_INCLUDE_DIR}")
+    message(STATUS "  LIBURING_LIBRARY:     ${LIBURING_LIBRARY}")
+    message(STATUS "  Compiler Flag Added:  -DDURING")
+    message(STATUS "--------------------------------------------")
+else()
+    message(STATUS "liburing could not be found. Falling back to kernel paths")
+endif()
+
 option(TESTING "Enable testing" OFF)
 if (TESTING)
 

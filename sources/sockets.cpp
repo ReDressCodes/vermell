@@ -211,7 +211,7 @@ void Server::setResponse(string &&data) {
      }
 }
 
-void Server::sendResponse(const string& head, const string& body) const {
+void Server::sendResponse(const struct io_uring_sqe *ring, const string& head, const string& body) const {
      if (socket_id < 0)
           return;
 
@@ -235,8 +235,22 @@ void Server::sendResponse(const string& head, const string& body) const {
           msghdr msg{};
           msg.msg_iov = iov;
           msg.msg_iovlen = static_cast<size_t>(count);
+#ifdef DURING
+	  struct io_uring_sqe *sqe;
+	  struct io_uring_cqe *cqe;
 
-          const ssize_t bytes_send = sendmsg(fd, &msg, MSG_NOSIGNAL);
+	  sqe = io_uring_get_sqe(ring);
+	  io_uring_prep_sendmsg(sqe, fd, &msg, MSG_NOSIGNAL);
+	  io_uring_submit(ring);
+	  io_uring_wait_cqe(&ring, &cqe);
+
+	  /* Once again, assume no errors */
+	  const ssize_t bytes_send = cqe->res;
+	  io_uring_cqe_seen(ring, cqe);
+#else
+           const ssize_t bytes_send = sendmsg(fd, &msg, MSG_NOSIGNAL);
+#endif
+
           if (bytes_send > 0) {
                done += static_cast<size_t>(bytes_send);
                size_t consumed = static_cast<size_t>(bytes_send);

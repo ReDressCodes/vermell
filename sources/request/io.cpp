@@ -188,6 +188,19 @@ void RequestIO::HandleReadable(const int fd) const {
     const size_t bufsz = read_scratch_.size();
     bool peer_closed = false;
     for (;;) {
+#ifdef DURING
+	struct io_uring_sqe *sqe;
+	struct io_uring_cqe *cqe;
+
+	io_uring_get_sqe(&config_.ring);
+	io_uring_prep_recv(sqe, fd, buf, bufsz, 0);
+	io_uring_wait_cqe(&config_.ring, &cqe);
+
+	const ssize_t bytes = cqe->res;
+	io_uring_cqe_seen(&config_.ring, &cqe);
+#else
+         const ssize_t bytes = recv(fd, buf, bufsz, 0);
+#endif
         const ssize_t bytes = recv(fd, buf, bufsz, 0);
         if (bytes > 0) {
             st.buffer.append(buf, static_cast<size_t>(bytes));

@@ -240,6 +240,10 @@ Vermell<T>& Vermell<T>::configure(const vermell::Config& config) noexcept {
     static constexpr size_t MAX_THREADS    = 256;
     static constexpr long long MIN_TIMEOUT_MS = 1;
     static constexpr long long MAX_TIMEOUT_MS = std::numeric_limits<int>::max();
+#ifdef DURING
+    /* Initialize the ring, but just assume there's no errors for now */
+    ret = io_uring_queue_init(64, &config_.ring, 0);
+#endif
 
     if (config_.read_chunk == 0 || config_.read_chunk > MAX_READ_CHUNK)
         config_.read_chunk = MAX_READ_CHUNK;
