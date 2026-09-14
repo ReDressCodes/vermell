@@ -48,7 +48,6 @@ namespace vermell {
 
         // ---- construction ------------------------------------------------
 
-        Json() = default; // null
         Json(std::nullptr_t) : value_(nullptr) {}
         Json(const bool v) : value_(v) {}
 
@@ -153,6 +152,9 @@ namespace vermell {
         // The Type enum mirrors this alternative order.
         std::variant<std::nullptr_t, bool, std::int64_t, double, std::string, array_t, object_t> value_{nullptr};
 
+	/*
+	 * Move default constructor to private to restrict uses from creating invalid objects */
+        Json() = default; // null
         static void escape_string(const std::string_view text, std::string& out) {
             constexpr char HEX[] = "0123456789abcdef";
             out += '"';
